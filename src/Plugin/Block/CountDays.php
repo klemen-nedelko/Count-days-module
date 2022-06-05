@@ -22,14 +22,12 @@ use Drupal\Core\Block\BlockBase;
             \Drupal::service('page_cache_kill_switch')->trigger();
              return[
                  '#markup' => $this->eventCountdown(),
+                  '#cache'=>[
+                    'max-age' => 0,
+                ],
              ];
             }
-            /**
-             * disable caching
-             */
-            public function getCacheMaxAge() {
-                return 0;
-            }
+
          public function eventCountdown()
          {
             $current_time = \Drupal::time()->getCurrentTime();
