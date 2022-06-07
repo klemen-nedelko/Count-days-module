@@ -22,41 +22,60 @@ use Drupal\Core\Block\BlockBase;
             \Drupal::service('page_cache_kill_switch')->trigger();
              return[
                  '#markup' => $this->eventCountdown(),
-                  '#cache'=>[
-                    'max-age' => 0,
-                ],
+                 '#cache'=>[
+                     'max-age' => 0,
+                 ],
              ];
             }
-
+            /**
+             * disable caching
+             */
          public function eventCountdown()
          {
             $current_time = \Drupal::time()->getCurrentTime();
-            $dateCurrent = date('d-m-Y', $current_time);
+            $dateCurrent = date('d-m-Y H:i:s', $current_time);
+            $dateCurrectComapre =date('d-m-Y', $current_time);
             $node = \Drupal::routeMatch()->getParameter('node');
-            if ($node instanceof \Drupal\node\NodeInterface) {
+            if ($node instanceof \Drupal\node\NodeInterface) 
+            {
               $nid = $node->id();
               $title = $node->title->value;
-              $date = $node->field_date->date->format('d-m-Y');
+              $date = $node->field_date->date->format('d-m-Y H:i:s');
               $startTimeStamp = strtotime($dateCurrent);
               $endTimeStamp = strtotime($date);
-                if($endTimeStamp > $startTimeStamp)
+              $dateDay = 86400;
+              $dateHours = 3600;
+              $timeDiffDay = abs($endTimeStamp - $startTimeStamp);
+              $numberHours = $timeDiffDay / $dateHours;
+              $numberHours = intval($numberHours);
+              $dayOne = $node->field_date->date->format('d-m-Y');
+            
+            
+            if($endTimeStamp > $startTimeStamp)
+            {
+                $timeDiff = abs($endTimeStamp - $startTimeStamp);
+                $numberDays = $timeDiff / $dateDay;
+                $numberDays = intval($numberDays);
+                if(($numberHours < $dateHours) && ($numberDays == 0)){
+                    if ($dayOne == $dateCurrectComapre) {
+                        return t("This event is happening today");
+                    }else{
+                        return t("This event is happening next day");
+                    }
+                }else {
+                    return t($numberDays . " days left until event starts");
+                }
+            }  
+            elseif($endTimeStamp < $startTimeStamp){
+                     return t("This event already passed");
+                }
+                else
                 {
-                    $timeDiff = abs($endTimeStamp - $startTimeStamp);
-                    $numberDays = $timeDiff/86400;  // 86400 seconds in one day
-                    // and you might want to convert to integer
-                    $numberDays = intval($numberDays);
-                    return $numberDays . " days left until event starts";
+                    return " ";
                 }
-                elseif ($endTimeStamp == $startTimeStamp) {
-                    return "This event is happening today";
-                }
-                elseif($endTimeStamp < $startTimeStamp){
-                return "This event already passed";
-            }
-            }else{
-                return " ";
-            }
+
          }
 
-     }
+        }
+    }
 ?>
