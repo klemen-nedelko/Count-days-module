@@ -1,4 +1,0 @@
-services:
-  count_days:
-  class: Drupal\count_days\Services\EventCountdown
-  arguments: ['@node']

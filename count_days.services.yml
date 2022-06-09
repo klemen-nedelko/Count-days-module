@@ -1,0 +1,3 @@
+services:
+  count_days.countDays:
+    class: Drupal\count_days\Services\EventCountdown
