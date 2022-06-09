@@ -1,3 +1,0 @@
-services:
-  count_days.count_days:
-    class: Drupal\count_days\Plugin\Block\CountDays
